@@ -157,7 +157,7 @@ const JoinGame = () => {
       .then((res) => {
         if (res.status === 404) {
           alert("there is no game with this gameid");
-          throw "error";
+          throw new Error("error occured");
         }
         return res.json();
       })
@@ -197,7 +197,7 @@ const GameDashBoard = () => {
   const [src, setSrc] = useState("");
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const { gameId, userName } = useParams();
-  const nav = useNavigate();
+  // const nav = useNavigate();
 
   const isHost = () => {
     return userName === game.host;
@@ -220,8 +220,9 @@ const GameDashBoard = () => {
     if (src !== "") {
       if (isPlayingAudio) {
         console.log(src);
-        // document.getElementById("music").play();
-        setTimeout(()=>{document.getElementById("music").play()},5000)
+        document.getElementById("music").play();
+        setTimeout(()=>{setIsPlayingAudio(prev=>!prev)}, 60000)
+        // setTimeout(()=>{document.getElementById("music").play()},5000)
       } else {
         document.getElementById("music").pause();
       }
@@ -232,18 +233,6 @@ const GameDashBoard = () => {
     fetch("http://192.168.116.26:3001/game?gameId=" + gameId)
     .then(res=>res.json())
     .then(res=>setGame(res))
-    //response looks like this
-    /*res = {
-        gameId : string,
-        host : string,
-        players : Array of playersName string[],
-        play : Boolean,
-        pause : Boolean,
-        songPlayed : Array of playersName string[],
-        imposter : String ,
-        imposterSong : String,
-        civilianSong : String
-    }*/
 
     const gameEvent = new EventSource(
       `http://192.168.116.26:3001/gameStatus?gameId=${gameId}&userName=${userName}`
@@ -262,6 +251,7 @@ const GameDashBoard = () => {
 
     gameEvent.addEventListener("pause", (e) => {
       console.log(e.data);
+      console.log("..............")
       if (isPlayingAudio) {
         setIsPlayingAudio((prev) => !prev);
       }
@@ -297,7 +287,7 @@ const GameDashBoard = () => {
         </ul>
         {src !== "" ? (
           <div className="music">
-            <audio id="music" src={src} controls></audio>
+            <audio id="music" src={src} ></audio>
           </div>
         ) : (
           <h3>
@@ -354,7 +344,7 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path='/' element={<Login />}></Route>
+          <Route index element={<Login />}></Route>
           <Route path="/host_join/:userName" element={<Host_join />}></Route>
           <Route path="/host/:userName" element={<HostGame />}></Route>
           <Route path="/join/:userName" element={<JoinGame />}></Route>
