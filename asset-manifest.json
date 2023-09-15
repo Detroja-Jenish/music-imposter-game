@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/music-imposter-game/static/css/main.82839b3d.css",
-    "main.js": "/music-imposter-game/static/js/main.8f669472.js",
+    "main.js": "/music-imposter-game/static/js/main.dc9f7a2c.js",
     "index.html": "/music-imposter-game/index.html",
     "main.82839b3d.css.map": "/music-imposter-game/static/css/main.82839b3d.css.map",
-    "main.8f669472.js.map": "/music-imposter-game/static/js/main.8f669472.js.map"
+    "main.dc9f7a2c.js.map": "/music-imposter-game/static/js/main.dc9f7a2c.js.map"
   },
   "entrypoints": [
     "static/css/main.82839b3d.css",
-    "static/js/main.8f669472.js"
+    "static/js/main.dc9f7a2c.js"
   ]
 }
