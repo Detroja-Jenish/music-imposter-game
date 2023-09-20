@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import {
-  BrowserRouter,
+  HashRouter,
   Routes,
   Route,
   useNavigate,
@@ -36,7 +36,7 @@ const Footer = () => {
         <i className="fa-brands fa-square-github"></i>
         <i className="fa-brands fa-square-twitter"></i>
         <i className="fa-brands fa-square-instagram"></i>
-        <audio src='http://192.168.116.26:3001/static/song/gta_samurai.mp3' constrols ></audio>
+        {/* <audio src='https://detrojajenish.pythonanywhere.com/static/song/gta_samurai.mp3' constrols ></audio> */}
       </div>
     </div>
   );
@@ -50,9 +50,11 @@ const Login = () => {
     const formData = new FormData(e.currentTarget);
     /*below fetch only response status 202 for success and 404 for error*/
     fetch(
-      "http://192.168.116.26:3001/login?userName=" + formData.get("userName")
+      "https://detrojajenish.pythonanywhere.com/login?userName=" + formData.get("userName"),
+      {method: "GET",mode: "cors"}
     )
       .then((res) => {
+        console.log(res);
         if (res.status == 404) {
           alert("enter valid name or name is already taken by other user");
           throw "error";
@@ -79,7 +81,7 @@ const Login = () => {
           <input type="submit" />
         </div>
       </form>
-      <img src="game-players.png" alt="" className="player-img" />
+      <img src={process.env.PUBLIC_URL + "/game-players.png"} alt="" className="player-img" />
     </div>
   );
 };
@@ -116,7 +118,7 @@ const HostGame = () => {
   const nav = useNavigate();
   useEffect(() => {
     //below api genrates gameId and resopse it which has field called gameId
-    fetch("http://192.168.116.26:3001/genrateGameId?userName=" + userName)
+    fetch("https://detrojajenish.pythonanywhere.com/genrateGameId?userName=" + userName, {method: "GET",mode: "cors"})
       .then((res) => res.json())
       .then((res) => setGameId(res.gameId));
   }, []);
@@ -148,11 +150,12 @@ const JoinGame = () => {
     const formData = new FormData(e.currentTarget);
     var allSet = true;
     fetch(
-      "http://192.168.116.26:3001/join" +
+      "https://detrojajenish.pythonanywhere.com/join" +
         "?userName=" +
         userName +
         "&gameId=" +
-        formData.get("gameId")
+        formData.get("gameId"),
+        {method: "GET",mode: "cors"}
     )
       .then((res) => {
         if (res.status === 404) {
@@ -205,14 +208,16 @@ const GameDashBoard = () => {
   const startGame = () => {
     //sends message to server to start game
     fetch(
-      `http://192.168.116.26:3001/game/start?gameId=${gameId}&userName=${userName}`
+      `https://detrojajenish.pythonanywhere.com/game/start?gameId=${gameId}&userName=${userName}`,
+      {method: "GET",mode: "cors"}
     ).catch((e) => console.log(e));
   };
 
   const stopGame = () => {
     //sends message to stop music
     fetch(
-      `http://192.168.116.26:3001/game/stop?gameId=${gameId}&userName=${userName}`
+      `https://detrojajenish.pythonanywhere.com/game/stop?gameId=${gameId}&userName=${userName}`,
+      {method: "GET",mode: "cors"}
     ).catch((e) => console.log(e));
   };
 
@@ -220,7 +225,7 @@ const GameDashBoard = () => {
     if (src !== "") {
       if (isPlayingAudio) {
         console.log(src);
-        document.getElementById("music").play();
+        setTimeout(()=>{document.getElementById("music").play()},5000);
         setTimeout(()=>{setIsPlayingAudio(prev=>!prev)}, 60000)
         // setTimeout(()=>{document.getElementById("music").play()},5000)
       } else {
@@ -230,12 +235,14 @@ const GameDashBoard = () => {
   }, [isPlayingAudio, src]);
 
   useEffect(() => {
-    fetch("http://192.168.116.26:3001/game?gameId=" + gameId)
+    fetch("https://detrojajenish.pythonanywhere.com/game?gameId=" + gameId,
+    {method: "GET",mode: "cors"}
+    )
     .then(res=>res.json())
     .then(res=>setGame(res))
 
     const gameEvent = new EventSource(
-      `http://192.168.116.26:3001/gameStatus?gameId=${gameId}&userName=${userName}`
+      `https://detrojajenish.pythonanywhere.com/gameStatus?gameId=${gameId}&userName=${userName}`,{method: "GET",mode: "cors"}
     );
     //server send play event when host starts a game
     gameEvent.addEventListener("play", (e) => {
@@ -244,6 +251,7 @@ const GameDashBoard = () => {
       if (!isPlayingAudio) {
         setIsPlayingAudio((prev) => !prev);
       }
+      
       if (src === "") {
         setSrc((prev) => data.src);
       }
@@ -341,7 +349,7 @@ const Layout = () => {
 
 root.render(
   <>
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Login />}></Route>
@@ -354,6 +362,6 @@ root.render(
           ></Route>
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   </>
 );
