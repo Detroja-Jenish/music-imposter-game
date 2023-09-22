@@ -114,24 +114,42 @@ const Host_join = () => {
 
 const HostGame = () => {
   const [gameId, setGameId] = useState("");
+  const [clickCount, setClickCount] = useState(1);
+  const [count, setCount] = useState(5);
+  const [intervalData, setIntervalData] = useState(null);
   const { userName } = useParams();
   const nav = useNavigate();
+  
   useEffect(() => {
     //below api genrates gameId and resopse it which has field called gameId
     fetch("https://detrojajenish.pythonanywhere.com/genrateGameId?userName=" + userName, {method: "GET",mode: "cors"})
       .then((res) => res.json())
       .then((res) => setGameId(res.gameId));
   }, []);
+
+  function countDown() {
+    if (`${clickCount}` == 1) {
+      setClickCount(pri => pri + 1);
+      
+      var ref = setInterval(() => {
+        setCount((pri) => pri - 1);
+      }, 1000);
+      setIntervalData(ref);
+
+      setTimeout(stop, 6000);
+
+      function stop() {
+        clearInterval(intervalData);
+        nav(`/gameConstrols/${userName}/${gameId}`);
+      }
+    }
+  }
+  
   return (
     <div className="host-page">
       <div className="host-box">
-        <h2>આક્રમણ... {gameId}</h2>
-        <button
-          className="box-btn"
-          onClick={() => {
-            nav(`/gameConstrols/${userName}/${gameId}`);
-          }}
-        >
+        <h2 id="countdown">આક્રમણ in {count} ...</h2>
+        <button className="box-btn" onClick={countDown} >
           {" "}
           <span className="btn-lbl">start game</span>
         </button>
