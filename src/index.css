@@ -165,13 +165,13 @@ code {
 .dashboard-box {
   width: 80%;
   height: 80%;
+  margin: 150px 0px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   text-align: center;
   flex-direction: column;
   color: white;
-  border-radius: 20px;
   text-transform: capitalize;
   line-height: 40px;
   word-spacing: 3px;
